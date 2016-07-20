@@ -1,1 +1,5 @@
+six
 toml
+attrdict
+click
+neo4j-driver

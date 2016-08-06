@@ -5,11 +5,12 @@ from attrdict import AttrDict
 
 DEFAULT_INPUT = '''
 [neo4j]
-address = "bold://localhost"
+address = "bolt://localhost"
+user = "neo4j"
+password = "neo4j"
 '''
 
 DEFAULT = toml.loads(DEFAULT_INPUT)
-
 
 class Config(AttrDict):
     def __init__(self, *args, **kwargs):

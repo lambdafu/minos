@@ -38,6 +38,14 @@ def config(ctx):
 @click.pass_context
 def server(ctx, host, port, debug):
     from . server import app
+    config = ctx.obj.config
+
+    from neo4j.v1 import GraphDatabase, basic_auth
+    auth = basic_auth(config.neo4j.user, config.neo4j.password)
+    driver = GraphDatabase.driver(config.neo4j.address, auth=auth)
+
+    from attrdict import AttrDict
+    app.minos = AttrDict({ 'config': config, 'driver': driver })
     app.run(host, port, debug)
 
 def main():

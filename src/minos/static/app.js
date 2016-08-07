@@ -33,7 +33,7 @@ function minos_info(state, action) {
     if (state === undefined) {
 	return {
 	    name: "minos",
-	    version: "0.0.0"
+	    version: "0.0.0",
 	};
     }
     
@@ -52,15 +52,20 @@ function minos_info(state, action) {
     return state;
 }
 
-function minos_experiments(state, action) {
+function minos_data(state, action) {
     if (state === undefined) {
-	return {};
+	return {
+	    experiments: [ { id: 1, name: "apn5", dim: 5, jobs: 12 },
+			   { id: 2, name: "apn6", dim: 6, jobs: 27 } ],
+	    jobs: [ { id: 1, name: "apn5", jobs: 12 },
+		    { id: 2, name: "apn6", jobs: 27 } ]
+	};
     }
     
     return state;
 }
 
-var minos_reducer = Redux.combineReducers({ info: minos_info, experiments: minos_experiments });
+var minos_reducer = Redux.combineReducers({ info: minos_info, data: minos_data });
 var store = Redux.createStore(minos_reducer);
 
 axios.get('/api/status')
@@ -74,13 +79,13 @@ const mapStateToProps = (state) => {
     return {
 	name: state.info.name,
 	version: state.info.version,
-	experiments: [ { name: "apn5", jobs: 12 },
-		       { name: "apn6", jobs: 27 } ]
+	experiments: state.data.experiments,
+	jobs: state.data.jobs
     }
 };
 
 const MinosNav_ = (props) => (
-<Navbar fixedTop={true} fluid={true}>
+<Navbar fluid={true}>
   <Navbar.Header>
     <Navbar.Brand>
       <Link to="/">{ props.name } { props.version }</Link>
@@ -107,10 +112,17 @@ const Experiments_ = (props) => (
   <h1>All Experiments</h1>
   <Table>
     <thead>
-      <tr><th>#</th><th>Name</th><th>Jobs</th></tr>
+      <tr><th>#</th><th>Name</th><th>Dimension</th><th>Jobs</th></tr>
     </thead>
     <tbody>
-      <tr><td>1</td><td><Link to="/experiment/1">apn5</Link></td><td>12</td></tr>
+	{ props.experiments.map((item) => (
+		<tr>
+		  <td>{ item.id }</td>
+		  <td><Link to={"/experiment/" + item.id}>{item.name}</Link></td>
+		  <td>{ item.dim }</td>
+		  <td>{ item.jobs }</td>
+		</tr>
+	)) }
     </tbody>
   </Table>
 </div>
